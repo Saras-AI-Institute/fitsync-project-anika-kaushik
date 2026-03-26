@@ -7,7 +7,7 @@ start_date = date(2025, 1, 1)
 dates = [start_date + timedelta(days=i) for i in range(365)]
 
 # Generate random data for each column
-np.random.seed(42)  # For reproducibility
+np.random.seed(42)  # For reproducibili
 
 steps = np.random.normal(8500, 2000, 365).clip(3000, 18000)
 sleep_hours = np.random.normal(7.2, 1, 365).clip(4.5, 9.5)
