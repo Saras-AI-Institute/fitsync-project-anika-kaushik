@@ -1,0 +1,4 @@
+[theme]
+base = "light"
+# Theme colors are overridden programmatically via CSS in utils/theme.py
+# This base = "light" prevents Streamlit's default dark overlay from interfering

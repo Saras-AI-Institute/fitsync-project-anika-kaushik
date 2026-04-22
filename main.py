@@ -1,54 +1,47 @@
-import streamlit as st
-from modules.processor import process_data
-import pandas as pd
+from utils.theme import apply_theme
 
-# Set the page configuration
+import streamlit as st
+
 st.set_page_config(layout="wide", page_title="FitSync")
 
-# Title of the dashboard
-st.title("FitSync - Personal Health Analytics")
+# Apply theme (injects CSS + renders toggle button)
+apply_theme()
 
-# Load and process the data
-df = process_data()
+# ── Page Content ──────────────────────────────────────────────────────────────
 
-# Add a sidebar header and time range filter
-st.sidebar.header("Filters")
-time_range = st.sidebar.selectbox(
-    "Select Time Range",
-    options=["Last 7 Days", "Last 30 Days", "All Time"],
-    index=2
+st.markdown("<br>", unsafe_allow_html=True)  # breathing room below toggle
+
+st.title("Welcome to FitSync")
+
+st.markdown(
+    """
+    <p style="font-size:1.15rem; margin-top: -8px; margin-bottom: 28px;">
+        Your personal health analytics dashboard
+    </p>
+    """,
+    unsafe_allow_html=True,
 )
 
-# Filter the DataFrame based on the time range
-if time_range == "Last 7 Days":
-    date_threshold = df['Date'].max() - pd.Timedelta(days=7)
-    filtered_df = df[df['Date'] > date_threshold]
-elif time_range == "Last 30 Days":
-    date_threshold = df['Date'].max() - pd.Timedelta(days=30)
-    filtered_df = df[df['Date'] > date_threshold]
-else:
-    filtered_df = df
+st.markdown("<hr>", unsafe_allow_html=True)
 
-# Calculate metrics from the filtered data
-avg_steps = filtered_df['steps'].mean()
-avg_sleep_hours = filtered_df['sleep_hours'].mean()
-avg_recovery_score = filtered_df['Recovery_Score'].mean()
-
-# Create a 3-column layout
+# Feature highlights
 col1, col2, col3 = st.columns(3)
-# Display filtered metrics in columns
+
 with col1:
-    st.metric(label="Average Steps", value=f"{avg_steps:.0f}", delta=None)
+    st.markdown("### 📊 Dashboard")
+    st.write("View real-time metrics — steps, sleep, recovery score, and calories at a glance.")
 
 with col2:
-    st.metric(label="Average Sleep Hours", value=f"{avg_sleep_hours:.1f}", delta=None)
+    st.markdown("### 📈 Trends")
+    st.write("Explore monthly trends and distributions to understand your long-term health patterns.")
 
 with col3:
-    st.metric(label="Average Recovery Score", value=f"{avg_recovery_score:.1f}", delta=None)
+    st.markdown("### 🔍 Insights")
+    st.write("Discover correlations between your habits and performance through interactive charts.")
 
-# Display the processed DataFrame
-st.write("### Processed Health Data")
-st.dataframe(filtered_df)
+st.markdown("<hr>", unsafe_allow_html=True)
 
-# Additional components can be added here for further interaction and visualization
-# e.g., charts, filters, etc.
+st.markdown(
+    "<p style='text-align:center; font-size:0.9rem; opacity:0.55;'>Use the sidebar to navigate between pages</p>",
+    unsafe_allow_html=True,
+)
