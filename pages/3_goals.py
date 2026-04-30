@@ -30,20 +30,16 @@ df['date'] = pd.to_datetime(df['date'])
 # ── Sidebar: Set Goals ────────────────────────────────────────────────────────
 st.sidebar.header("Set Your Goals")
 
-# Initialise defaults in session state once
-if 'goal_steps' not in st.session_state:
-    st.session_state['goal_steps'] = 8000
-if 'goal_sleep' not in st.session_state:
-    st.session_state['goal_sleep'] = 8.0
-if 'goal_recovery' not in st.session_state:
-    st.session_state['goal_recovery'] = 75
-
+# FIX: Don't pre-seed session_state keys that match widget keys — Streamlit
+# raises a StreamlitAPIException when both value= and session_state[key] are
+# set simultaneously. Instead, just pass `value` as the widget default; 
+# Streamlit will persist the value in session state automatically via the key.
 st.sidebar.markdown("**Daily Step Goal**")
 goal_steps = st.sidebar.number_input(
     "Steps target",
     min_value=1000,
     max_value=30000,
-    value=st.session_state['goal_steps'],
+    value=8000,
     step=500,
     key="goal_steps",
 )
@@ -53,7 +49,7 @@ goal_sleep = st.sidebar.number_input(
     "Sleep target (hrs)",
     min_value=4.0,
     max_value=12.0,
-    value=st.session_state['goal_sleep'],
+    value=8.0,
     step=0.5,
     key="goal_sleep",
 )
@@ -63,7 +59,7 @@ goal_recovery = st.sidebar.number_input(
     "Recovery score target",
     min_value=10,
     max_value=100,
-    value=st.session_state['goal_recovery'],
+    value=75,
     step=5,
     key="goal_recovery",
 )
@@ -87,8 +83,8 @@ else:
     eval_df = df
 
 # ── Compute Actuals ───────────────────────────────────────────────────────────
-avg_steps   = eval_df['steps'].mean()          if len(eval_df) else 0
-avg_sleep   = eval_df['sleep_hours'].mean()    if len(eval_df) else 0
+avg_steps    = eval_df['steps'].mean()          if len(eval_df) else 0
+avg_sleep    = eval_df['sleep_hours'].mean()    if len(eval_df) else 0
 avg_recovery = eval_df['recovery_score'].mean() if len(eval_df) else 0
 
 pct_steps    = min(avg_steps    / goal_steps    * 100, 100)
@@ -197,7 +193,11 @@ metric_choice = st.selectbox(
     options=["Steps", "Sleep Hours", "Recovery Score"],
 )
 
-col_map = {"Steps": ("steps", goal_steps), "Sleep Hours": ("sleep_hours", goal_sleep), "Recovery Score": ("recovery_score", goal_recovery)}
+col_map = {
+    "Steps":          ("steps",          goal_steps),
+    "Sleep Hours":    ("sleep_hours",    goal_sleep),
+    "Recovery Score": ("recovery_score", goal_recovery),
+}
 col_key, target = col_map[metric_choice]
 
 plot_df = eval_df[['date', col_key]].copy()

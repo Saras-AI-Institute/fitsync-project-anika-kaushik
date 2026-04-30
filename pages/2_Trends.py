@@ -2,7 +2,7 @@ import streamlit as st
 from modules.processor import process_data
 import pandas as pd
 import plotly.express as px
-from utils.theme import apply_theme, apply_plotly_theme
+from utils.theme import apply_theme, apply_plotly_theme, themed_dataframe
 
 st.set_page_config(layout="wide", page_title="FitSync · Trends & Insights")
 
@@ -23,8 +23,13 @@ st.markdown(
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
-# ── Load Data ─────────────────────────────────────────────────────────────────
-df = process_data()
+@st.cache_data
+def get_processed_data():
+    """Load and process data with caching"""
+    return process_data()
+
+# Use the cached function
+df = get_processed_data()
 df.columns = df.columns.str.lower()
 df['date'] = pd.to_datetime(df['date'])
 
@@ -47,9 +52,8 @@ else:
 
 # ── Summary Statistics ────────────────────────────────────────────────────────
 st.subheader("Summary Statistics")
-st.dataframe(
-    filtered_df[['recovery_score', 'sleep_hours', 'steps', 'calories_burned']].describe(),
-    use_container_width=True,
+themed_dataframe(
+    filtered_df[['recovery_score', 'sleep_hours', 'steps', 'calories_burned']].describe()
 )
 
 st.markdown("<br>", unsafe_allow_html=True)
