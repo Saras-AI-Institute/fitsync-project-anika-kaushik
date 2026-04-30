@@ -154,7 +154,7 @@ def apply_plotly_theme(fig):
         gridcolor=c["grid_color"],
         zerolinecolor=c["grid_color"],
         tickfont=dict(color=c["font_color"]),
-        titlefont=dict(color=c["font_color"]),
+        title=dict(font=dict(color=c["font_color"])),
         linecolor=c["grid_color"],
         tickcolor=c["font_color"],
     )
@@ -173,7 +173,7 @@ def apply_plotly_theme(fig):
         yaxis=axis_style,
         coloraxis_colorbar=dict(
             tickfont=dict(color=c["font_color"]),
-            titlefont=dict(color=c["font_color"]),
+            title=dict(font=dict(color=c["font_color"])),
         ),
     )
     fig.update_xaxes(**axis_style)
